@@ -1,6 +1,9 @@
-#Establecimiento de msexchRecipLimit a 15 para los usuarios que no tienen ningún valor establecido
+#Establecimiento de msexchRecipLimit para los usuarios que no tienen ningún valor establecido
 
-$mailBoxes = Get-Mailbox | Select-Object Alias -First 1
+$resultSize = 300 #Unlimited
+$targetRecip = 15
+
+$mailBoxes = Get-Mailbox -ResultSize $resultSize | Select-Object Alias
 
 foreach($mb in $mailBoxes)
 {
@@ -8,16 +11,16 @@ foreach($mb in $mailBoxes)
     {
         $u = Get-ADUser $mb.Alias -Properties msexchRecipLimit
         $limit = $u.msexchRecipLimit
-        $mb.Alias + " : " + $limit
-
+        
         if (!$limit)
         {
-            echo "**** hay que establecerlo! ****"
-            #Set-ADUser -Identity $mb.Alias -Add @{msexchRecipLimit=15}
+            echo "Estableciendo valor para $mb"
+            Set-ADUser -Identity $mb.Alias -Add @{msexchRecipLimit=$targetRecip}
         }
     }
     catch
     {
-        write-warning "No encontrado"
+        $ex = "No encontrado: " + $mb.Alias
+        write-warning $ex
     }
 }
