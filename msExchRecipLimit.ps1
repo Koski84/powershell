@@ -1,6 +1,6 @@
 #Establecimiento de msexchRecipLimit para los usuarios que no tienen ningún valor establecido
 
-$resultSize = 300 #Unlimited
+$resultSize = "Unlimited"
 $targetRecip = 15
 
 $mailBoxes = Get-Mailbox -ResultSize $resultSize | Select-Object Alias
